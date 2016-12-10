@@ -76,7 +76,7 @@ void copy_waypoints (struct coord** dest, struct coord* src)
 
 	while (current)
 	{
-		new_waypoint = (struct coord*)malloc(sizeof(struct coord*));
+		new_waypoint = (struct coord*)malloc(sizeof(struct coord));
 		*new_waypoint = *current;
 		new_waypoint->prev = NULL;
 
