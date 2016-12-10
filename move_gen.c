@@ -56,6 +56,7 @@ void add_move (struct move** move_list, struct coord start, struct coord end, in
 	new_move->end = end;
 	new_move->points = points;
 	new_move->prev = NULL;
+	new_move->waypoints = NULL;
 
 	if (!*move_list)
 		new_move->next = NULL;
@@ -66,6 +67,31 @@ void add_move (struct move** move_list, struct coord start, struct coord end, in
 	}
 
 	*move_list = new_move;
+}
+
+void copy_waypoints (struct coord** dest, struct coord* src)
+{
+	struct coord* current = src;
+	struct coord* new_waypoint;
+
+	while (current)
+	{
+		new_waypoint = (struct coord*)malloc(sizeof(struct coord*));
+		*new_waypoint = *current;
+		new_waypoint->prev = NULL;
+
+		if (!*dest)
+			new_waypoint->next = NULL;
+		else
+		{
+			(*dest)->prev = new_waypoint;
+			new_waypoint->next = *dest;
+		}
+
+		*dest = new_waypoint;
+
+		current = current->next;
+	}
 }
 
 char check_bounds (struct coord end_coord)
@@ -79,11 +105,13 @@ char check_bounds (struct coord end_coord)
 	return 1;
 }
 
-void add_jumps (struct move** move_list, char** game_board, struct coord start, struct coord current, enum COLOR current_color, int points)
+void add_jumps (struct move** move_list, char** game_board, struct coord start, struct coord current, enum COLOR current_color, int points, struct coord* waypoints)
 {
 	char direction = -1 * ((5 - current_color) / 2);
 	struct coord next;
 	char made_jump = 0;
+
+	current.next = waypoints;
 
 	next.row = current.row + 2*direction;
 	next.col = current.col + 2;
@@ -93,7 +121,7 @@ void add_jumps (struct move** move_list, char** game_board, struct coord start, 
 		    !check_color (game_board [current.row+direction][current.col+1], current_color) &&
 		    game_board [next.row][next.col] == ' ')
 		{
-			add_jumps (move_list, game_board, start, next, current_color, points + 1);
+			add_jumps (move_list, game_board, start, next, current_color, points + 1, &current);
 			made_jump = 1;
 		}
 	}
@@ -106,13 +134,16 @@ void add_jumps (struct move** move_list, char** game_board, struct coord start, 
 		    !check_color (game_board [current.row+direction][current.col-1], current_color) &&
 		    game_board [next.row][next.col] == ' ')
 		{
-			add_jumps (move_list, game_board, start, next, current_color, points + 1);
+			add_jumps (move_list, game_board, start, next, current_color, points + 1, &current);
 			made_jump = 1;
 		}
 	}
 
 	if (!made_jump && (start.row != current.row || start.col != current.col))
+	{
 		add_move (move_list, start, current, points);
+		copy_waypoints (&((*move_list)->waypoints), waypoints);
+	}
 }
 
 void get_legal_moves (struct move** move_list, char** game_board, enum COLOR current_color)
@@ -143,7 +174,8 @@ void get_legal_moves (struct move** move_list, char** game_board, enum COLOR cur
 			if (check_bounds (end) && game_board [i+direction][j-1] == ' ')
 				add_move (move_list, start, end, 0);
 
-			add_jumps (move_list, game_board, start, start, current_color, 0);
+			start.next = NULL;
+			add_jumps (move_list, game_board, start, start, current_color, 0, NULL);
 		}
 	}
 }

@@ -19,6 +19,19 @@ struct alpha_beta_args
 
 sem_t num_threads;
 
+void free_waypoints (struct move* to_free)
+{
+	struct coord* current = to_free->waypoints;
+	struct coord* tmp;
+
+	while (current)
+	{
+		tmp = current->next;
+		free(current);
+		current = tmp;
+	}
+}
+
 char** make_move (char** current_board, struct move to_make)
 {
 	int i;
@@ -26,6 +39,7 @@ char** make_move (char** current_board, struct move to_make)
 	char col_dir;
 	char row_dir;
 	char** ret = (char**)malloc(8 * sizeof(char*));
+	struct coord* current_waypoint;
 
 	for (i = 0; i < 8; i++)
 		ret[i] = (char*)malloc(8 * sizeof(char));
@@ -36,24 +50,15 @@ char** make_move (char** current_board, struct move to_make)
 			ret [i][j] = current_board [i][j];
 	}
 
-	if (to_make.end.col - to_make.start.col < 0)
-		col_dir = -1;
-	else
-		col_dir = 1;
-
-	if (to_make.end.row - to_make.start.row < 0)
-		row_dir = -1;
-	else
-		row_dir = 1;
-
-	j = to_make.start.col;
-	for (i = to_make.start.row; i != to_make.end.row; i = i + row_dir)
+	ret [to_make.start.row][to_make.start.col] = ' ';
+	current_waypoint = to_make.waypoints;
+	while (current_waypoint)
 	{
-		ret [i][j] = ' ';
-		j = j + col_dir;
+		ret [current_waypoint->row][current_waypoint->col] = ' ';
+		current_waypoint = current_waypoint->next;
 	}
 
-	ret [i][j] = current_board [to_make.start.row][to_make.start.col];
+	ret [to_make.end.row][to_make.end.col] = current_board [to_make.start.row][to_make.start.col];
 
 	return ret;
 }
@@ -95,6 +100,7 @@ struct move* alpha_beta (char** game_board, enum COLOR current_color, int up_max
 			for (i = 0; i < 8; i++)
 				free(new_game_board[i]);
 			free(new_game_board);
+			free_waypoints(best_opponent_move);
 			free(best_opponent_move);
 		}
 
@@ -114,7 +120,10 @@ struct move* alpha_beta (char** game_board, enum COLOR current_color, int up_max
 		tmp = current->next;
 
 		if (best_current_move != current)
+		{
+			free_waypoints(current);
 			free(current);
+		}
 
 		current = tmp;
 	}
@@ -146,6 +155,7 @@ struct move get_best_move (char** game_board, enum COLOR current_color, int max_
 	else
 	{
 		ret = *best_move;
+		free_waypoints(best_move);
 		free(best_move);
 	}
 	return ret;
