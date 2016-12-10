@@ -70,10 +70,10 @@ void add_move (struct move** move_list, struct coord start, struct coord end, in
 
 char check_bounds (struct coord end_coord)
 {
-	if (end_coord.row > 8 || end_coord.row < 0)
+	if (end_coord.row > 7 || end_coord.row < 0)
 		return 0;
 
-	if (end_coord.col > 8 || end_coord.col < 0)
+	if (end_coord.col > 7 || end_coord.col < 0)
 		return 0;
 
 	return 1;
@@ -133,21 +133,15 @@ void get_legal_moves (struct move** move_list, char** game_board, enum COLOR cur
 			start.row = i;
 			start.col = j;
 
-			if (game_board [i+direction][j+1] == ' ')
-			{
-				end.row = i + direction;
-				end.col = j + 1;
-				if (check_bounds (end))
-					add_move (move_list, start, end, 0);
-			}
+			end.row = i + direction;
+			end.col = j + 1;
+			if (check_bounds (end) && game_board [i+direction][j+1] == ' ')
+				add_move (move_list, start, end, 0);
 
-			if (game_board [i+direction][j-1] == ' ')
-			{
-				end.row = i + direction;
-				end.col = j - 1;
-				if (check_bounds (end))
-					add_move (move_list, start, end, 0);
-			}
+			end.row = i + direction;
+			end.col = j - 1;
+			if (check_bounds (end) && game_board [i+direction][j-1] == ' ')
+				add_move (move_list, start, end, 0);
 
 			add_jumps (move_list, game_board, start, start, current_color, 0);
 		}

@@ -87,7 +87,10 @@ struct move* alpha_beta (char** game_board, enum COLOR current_color, int up_max
 		{
 			new_game_board = make_move (game_board, *current);
 			best_opponent_move = alpha_beta (new_game_board, next_color, best_points, current->points, depth + 1, max_depth);
-			current->points -= best_opponent_move->points;
+			if (best_opponent_move)
+				current->points -= best_opponent_move->points;
+			else
+				current->points = 99999;
 
 			for (i = 0; i < 8; i++)
 				free(new_game_board[i]);
