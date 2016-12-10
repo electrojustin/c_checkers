@@ -1,5 +1,6 @@
 #include "move_gen.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 char jump_available (struct move* move_list)
 {
@@ -80,7 +81,7 @@ char check_bounds (struct coord end_coord)
 
 void add_jumps (struct move** move_list, char** game_board, struct coord start, struct coord current, enum COLOR current_color, int points)
 {
-	char direction = (5 - current_color) / 2;
+	char direction = -1 * ((5 - current_color) / 2);
 	struct coord next;
 	char made_jump = 0;
 
