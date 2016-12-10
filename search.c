@@ -58,7 +58,7 @@ char** make_move (char** current_board, struct move to_make)
 	return ret;
 }
 
-struct move* alpha_beta (char** game_board, enum COLOR current_color, int* up_max, int up_current, int depth, int max_depth)
+struct move* alpha_beta (char** game_board, enum COLOR current_color, int up_max, int up_current, int depth, int max_depth)
 {
 	struct move* move_list = NULL;
 	struct move* current;
@@ -68,6 +68,7 @@ struct move* alpha_beta (char** game_board, enum COLOR current_color, int* up_ma
 	char** new_game_board;
 	enum COLOR next_color;
 	int i;
+	int best_points = -99999;
 
 	if (current_color == red)
 		next_color = white;
@@ -79,10 +80,13 @@ struct move* alpha_beta (char** game_board, enum COLOR current_color, int* up_ma
 	current = move_list;
 	while (current)
 	{
+		if ((up_current - best_points) < up_max)
+			break;
+
 		if (depth < max_depth)
 		{
 			new_game_board = make_move (game_board, *current);
-			best_opponent_move = alpha_beta (new_game_board, next_color, NULL, 0, depth + 1, max_depth);
+			best_opponent_move = alpha_beta (new_game_board, next_color, best_points, current->points, depth + 1, max_depth);
 			current->points -= best_opponent_move->points;
 
 			for (i = 0; i < 8; i++)
@@ -92,10 +96,15 @@ struct move* alpha_beta (char** game_board, enum COLOR current_color, int* up_ma
 		}
 
 		if (!best_current_move || best_current_move->points < current->points)
+		{
 			best_current_move = current;
+			best_points = current->points;
+		}
 
 		current = current->next;
 	}
+
+	current = move_list;
 
 	while (current)
 	{
@@ -120,7 +129,7 @@ struct move get_best_move (char** game_board, enum COLOR current_color, int max_
 	struct move* best_move;
 	struct move ret;
 
-	best_move = alpha_beta (game_board, current_color, NULL, 0, 0, max_depth);
+	best_move = alpha_beta (game_board, current_color, -99999, 0, 0, max_depth);
 	if (!best_move)
 	{
 		ret.start.col = -1;
