@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int main (void)
 {
@@ -23,7 +24,7 @@ int main (void)
 	game_board = (char**)malloc(8 * sizeof(char*));
 	for (i = 0; i < 8; i++)
 	{
-		game_board[i] = (char*)malloc(9 * sizeof(char)); //The extra character is to account for null terminators
+		game_board[i] = (char*)malloc(10 * sizeof(char)); //The extra character is to account for null terminators
 
 		for (j = 0; j < 9; j++)
 			game_board[i][j] = 0;
@@ -56,4 +57,7 @@ int main (void)
 
 	fclose (in_file);
 	free (__arg_string);
+	for (i = 0; i < 8; i++)
+		free(game_board[i]);
+	free(game_board);
 }
