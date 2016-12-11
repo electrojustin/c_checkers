@@ -207,6 +207,9 @@ void* threaded_alpha_beta (void* __args)
 	free(args);
 
 	sem_post(&num_threads);
+
+	pthread_detach(pthread_self());
+	pthread_exit(NULL);
 }
 
 struct move get_best_move (char** game_board, enum COLOR current_color, int max_threads, int max_depth)
