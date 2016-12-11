@@ -30,11 +30,20 @@ int main (void)
 			game_board[i][j] = 0;
 	}
 
+	printf(" -----------------\n");
 	for (i = 0; i < 8; i++)
 	{
 		fgets(game_board[i], 10, in_file);
-		printf ("%s", game_board[i]);
+		printf("%d|", i+1);
+		for (j = 0; j < 8; j++)
+			printf("%c|", game_board[i][j]);
+		printf("\n");
+		printf(" -----------------\n");
 	}
+	printf(" ");
+	for (i = 0; i < 8; i++)
+		printf(" %c", 'h'-i);
+	printf("\n");
 	fgets(arg_string, 100, in_file);
 	if (!strncmp(arg_string, "whi", 2))
 		color = white;
@@ -49,11 +58,8 @@ int main (void)
 
 	best_move = get_best_move(game_board, color, num_threads, max_depth);
 
-	printf("(%d, %d)-(%d, %d)\n", best_move.start.row, best_move.start.col, best_move.end.row, best_move.end.col);
+	printf("%c%d-%c%d\n", 'h'-best_move.start.col, best_move.start.row+1, 'h'-best_move.end.col, best_move.end.row+1);
 	printf("Points: %d\n", best_move.points);
-	//TODO: load and parse input files
-	//call the search function with the given parameters
-	//output the chosen move
 
 	fclose (in_file);
 	free (__arg_string);
