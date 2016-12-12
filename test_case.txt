@@ -1,0 +1,9 @@
+        
+  r r   
+   w    
+        
+   w w  
+    r   
+   w w  
+        
+red 4 4

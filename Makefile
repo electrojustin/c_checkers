@@ -1,6 +1,6 @@
-all: test
-test: color.o move_gen.o search.o main.o
-	gcc -g color.o move_gen.o search.o main.o -o test -lpthread
+all: checkers
+checkers: color.o move_gen.o search.o main.o
+	gcc -g color.o move_gen.o search.o main.o -o checkers -lpthread
 main.o: main.c search.h move.h color.h
 	gcc -g -c main.c
 search.o: search.h search.c move_gen.h move.h color.h

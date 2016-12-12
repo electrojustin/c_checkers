@@ -1,0 +1,9 @@
+     w  
+  r r r 
+   w    
+    r   
+   w    
+    r   
+        
+        
+whi 4 4
