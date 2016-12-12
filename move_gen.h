@@ -3,5 +3,5 @@
 
 #ifndef MOVE_GEN_H
 #define MOVE_GEN_H
-void get_legal_moves (struct move** move_list, char** game_board, enum COLOR current_color);
+void get_legal_moves (struct move** move_list, char** game_board, enum COLOR current_color); //Puts a linked-list of legal moves into move_list
 #endif

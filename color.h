@@ -6,5 +6,5 @@ enum COLOR
 	white = 7
 };
 
-char check_color (char piece, enum COLOR current_color);
+char check_color (char piece, enum COLOR current_color); //Returns true if the piece is of color current_color, false otherwise. Note: this means spaces will always return false
 #endif

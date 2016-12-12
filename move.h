@@ -1,5 +1,6 @@
 #ifndef MOVE_H
 #define MOVE_H
+//Convenient struct for bundling rows and columns and allowing them to be put in a linked list
 struct coord
 {
 	int row;
@@ -8,6 +9,7 @@ struct coord
 	struct coord* prev;
 };
 
+//Struct that stores information about moves
 struct move
 {
 	struct coord start;
